@@ -2,8 +2,8 @@ const  mongoose=require('mongoose')
 const Schema = mongoose.Schema
 const postSchema=new Schema({
     imageSrc:{
-        type:String, 
-        required:true,
+        type:String,
+        required:false,
     },
 
     description:{
@@ -12,7 +12,8 @@ const postSchema=new Schema({
     },
     interactions:{
         likes:{type:Number,required:true},
-        comments:{type:[String],required:true}
+        comments:{type:[String],required:true},
+        required:false
     }
 
 },{timestamps:true});

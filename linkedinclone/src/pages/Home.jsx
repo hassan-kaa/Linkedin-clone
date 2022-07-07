@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Identity from "../components/Identity";
 import styled from "styled-components";
 // import { Container } from "@mui/system";
@@ -7,7 +7,25 @@ import { Divider, MenuItem, Menu, IconButton } from "@mui/material";
 import Post from "../components/Post";
 import Person from "../components/Person";
 import AddIcon from "@mui/icons-material/Add";
+import { useContext } from "react";
+import PostsContext from "../context/PostsContext";
+import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
+import { Container } from "@mui/system";
+
 function Home() {
+  const [loading, setLoading] = useState(true);
+  const { posts, setPosts } = useContext(PostsContext);
+  const fetchPosts = () => {
+    axios
+      .get("api")
+      .then((res) => setPosts(res.data))
+      .then(() => setLoading(false))
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    fetchPosts();
+  }, []);
   const [anchorEl, setAnchorEl] = useState();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -54,14 +72,24 @@ function Home() {
             <MenuItem onClick={handleClose}>Recent</MenuItem>
           </Menu>
         </Divider>
-        <Post />
-        <Post />
-        <Post />
-        <Post />
+        {loading ? (
+          <Container
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "20vh",
+            }}
+          >
+            <ClipLoader color="#00000" loading={loading} size={50} />
+          </Container>
+        ) : (
+          posts.map((post) => <Post item={post} key={post._id} />)
+        )}
       </Center>
       <Right>
         <span>
-          <h5>Ajouter a votre fil D'actualite</h5>{" "}
+          <h5>Ajouter a votre fil D'actualite</h5>
           <IconButton size="small">
             <AddIcon fontSize="inherit" />
           </IconButton>

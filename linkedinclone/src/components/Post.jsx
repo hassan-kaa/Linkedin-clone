@@ -1,16 +1,36 @@
 import { Divider, IconButton } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PublicIcon from "@mui/icons-material/Public";
 import InteractionBar from "./InteractionBar";
 import styled from "styled-components";
-function Post() {
+import { MenuItem, Menu } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+
+function Post({ item }) {
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState();
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleDelete = () => {
+    fetch(`/api/${item._id}`, {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(item),
+    })
+      .then(() => navigate("/"))
+      .then(() => console.log("element deleted successfully"));
+    setAnchorEl(null);
+  };
   return (
     <PostCard>
       <PostHead>
         <span>
           <ProfileImage
-            src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+            src={item.imageSrc}
             alt="profile pic"
             width={48}
             height={48}
@@ -19,24 +39,43 @@ function Post() {
             <h5>Profile name</h5>
             <p>nb abonnees</p>
             <span>
-              <p>44min . </p> <PublicIcon fontSize="inherit" />
+              <p>{item.createdAt} </p> <PublicIcon fontSize="inherit" />
             </span>
           </div>
         </span>
         <IconButton>
-          <MoreHorizIcon />
+          <MoreHorizIcon
+            aria-controls={open ? "demo-positioned-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          />
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleDelete}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <MenuItem onClick={handleDelete}>
+              <IconButton>
+                <DeleteIcon />
+              </IconButton>
+              <p>Delete post</p>
+            </MenuItem>
+          </Menu>
         </IconButton>
       </PostHead>
-      <p className="desc">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit tempore
-        consectetur harum, iure nam blanditiis dolores at reiciendis
-        consequuntur quo voluptatum sed atque dolorum ut numquam inventore
-        voluptate? Amet, corrupti!
-      </p>
-      <PostImage
-        src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fG1vc3F1ZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-        alt="post pic"
-      />
+      <p className="desc">{item.description}</p>
+      <PostImage src={item.imageSrc} alt="post pic" />
       <Divider />
       <InteractionBar />
     </PostCard>

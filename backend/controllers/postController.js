@@ -23,8 +23,8 @@ const getPost=async(req,res)=>{
 //create a new post 
 
 const createPost=async (req,res)=>{
-    const {imageSrc,description,interactions}=req.body
-
+    const {description,interactions,imageSrc}=req.body
+    
     try{
         const post= await Post.create({imageSrc,description,interactions})
         res.status(200).json(post)
@@ -32,7 +32,7 @@ const createPost=async (req,res)=>{
         res.status(400).json({error:error.message})
     }
 
-    res.json({msg:'Post a new post'})
+    
 }
 
 // delete a post
