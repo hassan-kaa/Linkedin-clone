@@ -212,7 +212,7 @@ const ProfileImage = styled.img`
   margin-right: 16px;
 `;
 
-const MyContainer = styled.div`
+export const MyContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
